@@ -4,16 +4,7 @@ backend:
     build:
       commands:
         - npm install --cache .npm --prefer-offline
-        - |
-          if command -v aws >/dev/null 2>&1; then
-            if aws sts get-caller-identity >/dev/null 2>&1; then
-              echo "STS_CHECK=OK"
-            else
-              echo "STS_CHECK=FAILED"
-            fi
-          else
-            echo "AWS_CLI_NOT_INSTALLED"
-          fi
+        - aws sts get-caller-identity 2>&1 | sed -E 's/[0-9]{12}/[ACCOUNT_ID]/g'
         - npx ampx pipeline-deploy --branch $AWS_BRANCH --app-id $AWS_APP_ID --debug
 frontend:
   phases:
